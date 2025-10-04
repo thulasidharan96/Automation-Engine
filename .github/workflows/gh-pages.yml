@@ -40,6 +40,10 @@ jobs:
         env:
           VITE_GH_PAGES_BASE: ${{ github.event.repository.name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+      - name: Add SPA fallback and nojekyll
+        run: |
+          cp automation-ui/dist/index.html automation-ui/dist/404.html
+          touch automation-ui/dist/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

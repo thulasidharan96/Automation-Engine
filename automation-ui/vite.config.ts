@@ -5,9 +5,8 @@ import react from '@vitejs/plugin-react';
 const isGitHubPages = process.env.GITHUB_PAGES === '1';
 const repoNameFromEnv = process.env.GITHUB_REPOSITORY?.split('/')?.[1];
 const basePathOverride = process.env.VITE_GH_PAGES_BASE; // e.g. repo name
-const basePath = isGitHubPages
-  ? `/${(basePathOverride || repoNameFromEnv || '').replace(/^\/+|\/+$/g, '')}/`
-  : '/';
+const derived = (basePathOverride || repoNameFromEnv || '').replace(/^\/+|\/+$/g, '');
+const basePath = isGitHubPages && derived ? `/${derived}/` : '/';
 
 export default defineConfig({
   plugins: [react()],
