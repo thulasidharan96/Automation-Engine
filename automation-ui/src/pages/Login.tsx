@@ -1,55 +1,95 @@
 import { useEffect } from 'react';
-import { Button, Card, CardHeader, Field, Input, Text, tokens, makeStyles } from '@fluentui/react-components';
+import { Button, Card, CardHeader, Text, tokens, makeStyles, Divider } from '@fluentui/react-components';
 // import { msalInstance, loginRequest } from '../auth/msal';
 import { useNavigate } from 'react-router-dom';
-// No auth in demo
 
 const useStyles = makeStyles({
   root: {
+    minHeight: '100vh',
     display: 'grid',
     placeItems: 'center',
-    minHeight: '100vh',
-    background: tokens.colorNeutralBackground2,
+    padding: tokens.spacingHorizontalL,
+    backgroundImage:
+      `radial-gradient(1200px 600px at 10% -10%, ${tokens.colorBrandBackground2}22, transparent),` +
+      `radial-gradient(800px 400px at 110% 10%, ${tokens.colorBrandBackground2}22, transparent),` +
+      `${tokens.colorNeutralBackground3}`,
   },
-  card: {},
+  card: {
+    width: '100%',
+    maxWidth: '440px',
+  },
+  brand: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalS,
+    marginBottom: tokens.spacingVerticalM,
+  },
+  actions: {
+    display: 'grid',
+    gap: tokens.spacingVerticalS,
+  },
+  subtle: {
+    color: tokens.colorNeutralForeground3,
+  },
 });
+
+function MicrosoftIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 23 23" aria-hidden="true">
+      <rect x="1" y="1" width="9" height="9" fill="#F35325" />
+      <rect x="12" y="1" width="9" height="9" fill="#81BC06" />
+      <rect x="1" y="12" width="9" height="9" fill="#05A6F0" />
+      <rect x="12" y="12" width="9" height="9" fill="#FFBA08" />
+    </svg>
+  );
+}
 
 export default function Login() {
   const styles = useStyles();
-  // This demo has no real auth; clicking Sign in just routes
   const navigate = useNavigate();
-  // no-op
 
   useEffect(() => {
     document.title = 'Sign in • Automation Studio';
   }, []);
 
-  function handleMockLogin() {
+  function signInWithMicrosoft() {
+    // To enable real auth, uncomment imports and use:
+    // (msalInstance as any)?.loginRedirect(loginRequest as any);
     navigate('/dashboard', { replace: true });
   }
 
+  // function continueAsGuest() {
+  //   navigate('/dashboard');
+  // }
+
   return (
     <div className={styles.root}>
-      <Card className={styles.card}>
-        <CardHeader header={<Text weight="semibold">Sign in to continue</Text>} />
+      <Card className={styles.card} appearance="filled-alternative">
+        <CardHeader
+          header={
+            <div className={styles.brand}>
+              <MicrosoftIcon />
+              <Text weight="semibold">Automation Studio</Text>
+            </div>
+          }
+        />
+
         <div style={{ display: 'grid', gap: 12 }}>
-          {/*
-          <Button appearance="primary" onClick={() => msalInstance?.loginRedirect(loginRequest as any)}>
-            Sign in with Microsoft
-          </Button>
-          <Text size={200}>
-            The Microsoft OAuth button above is commented in code. Uncomment imports and button, and set VITE_AZURE_CLIENT_ID, VITE_AZURE_TENANT_ID in your env.
-          </Text>
-          */}
-          <Field label="Email">
-            <Input placeholder="you@contoso.com" type="email" />
-          </Field>
-          <Field label="Password">
-            <Input placeholder="••••••••" type="password" />
-          </Field>
-          <Button appearance="primary" onClick={handleMockLogin}>Sign in</Button>
-          <Text size={200}>
-            This demo uses mock auth. Replace with MSAL later.
+          <Text size={400} weight="semibold">Welcome back</Text>
+          <Text className={styles.subtle}>Sign in to create and manage your automations</Text>
+
+          <div className={styles.actions}>
+            <Button appearance="primary" size="large" icon={<MicrosoftIcon />} onClick={signInWithMicrosoft}>
+              Sign in with Microsoft
+            </Button>
+
+            {/* Uncomment the button below to use email/pass locally or keep SSO only */}
+            {/* <Button appearance="secondary" onClick={continueAsGuest}>Continue as guest</Button> */}
+          </div>
+
+          <Divider />
+          <Text size={200} className={styles.subtle}>
+            OAuth is mocked in this demo. The button will route to your dashboard. To enable real OAuth, follow the README to configure MSAL and Azure AD.
           </Text>
         </div>
       </Card>
