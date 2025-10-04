@@ -1,13 +1,11 @@
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import {
-  BrandVariants,
+  type BrandVariants,
   createLightTheme,
   createDarkTheme,
   FluentProvider,
-  webLightTheme,
   tokens,
-  Button,
   Avatar,
   Toolbar,
   ToolbarButton,
@@ -81,8 +79,7 @@ const useStyles = makeStyles({
 export function AppShell({ children }: PropsWithChildren) {
   const styles = useStyles();
   const theme = useAutomationStudio((s) => s.theme);
-  const user = useAutomationStudio((s) => s.user);
-  const signOut = useAutomationStudio((s) => s.signOut);
+  const user = { name: 'Demo User', email: 'demo@example.com' };
 
   return (
     <FluentProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
@@ -97,12 +94,13 @@ export function AppShell({ children }: PropsWithChildren) {
               <Avatar name={user?.name ?? 'User'} />
             </Tooltip>
             <Toolbar>
-              <ToolbarButton aria-label="Profile" icon={<Person24Regular />} as={Link} to="/profile" />
-              <ToolbarButton aria-label="Sign out" icon={<SignOut24Regular />} onClick={signOut} as={Link} to="/login" />
+              <ToolbarButton aria-label="Profile" icon={<Person24Regular />} as="a" href="#/profile" />
+              <ToolbarButton aria-label="Sign out" icon={<SignOut24Regular />} as="a" href="#/login" />
             </Toolbar>
           </div>
         </header>
         <nav className={styles.nav}>
+          <NavLink className={styles.navLink} to="/dashboard">Dashboard</NavLink>
           <NavLink className={styles.navLink} to="/gallery">Templates</NavLink>
           <NavLink className={styles.navLink} to="/automations">My Automations</NavLink>
           <NavLink className={styles.navLink} to="/designer">Designer</NavLink>

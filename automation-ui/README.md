@@ -1,73 +1,169 @@
-# React + TypeScript + Vite
+# Automation Studio (UI Demo)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A front-end only demo inspired by Microsoft Power Automate. Built with React + Fluent UI 9, and deployable to GitHub Pages. No backend, no authentication. Uses HashRouter so routes work on static hosting.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Dashboard with quick links
+- Template gallery (Power Automate-like)
+- Dynamic configuration forms generated from template definitions
+- My Automations list with local persistence (localStorage)
+- Drag-and-drop designer canvas (basic) using dnd-kit
+- Fluent UI 9 app shell, header, nav, and theming
+- Hash-based routing for static hosting
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19, TypeScript, Vite
+- Fluent UI 9 (`@fluentui/react-components`)
+- React Router v6 (`HashRouter` via `createHashRouter`)
+- Zustand for simple state and local persistence
+- dnd-kit for drag-and-drop
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+automation-ui/
+  src/
+    components/
+      AppShell.tsx          # Fluent UI layout, header, nav, outlet
+      DynamicForm.tsx       # Generates fields from template definitions
+      RequireAuth.tsx       # Unused in demo (kept for future auth)
+    data/
+      templates.ts          # Template definitions (Excel alert, List digest, Teams message)
+    pages/
+      Dashboard.tsx         # Landing page after 'Sign in'
+      Login.tsx             # Dummy login that routes to Dashboard
+      Gallery.tsx           # Template gallery list
+      ConfigureTemplate.tsx # Dynamic form for selected template
+      MyAutomations.tsx     # List of saved automations (localStorage)
+      Designer.tsx          # Basic drag & drop canvas
+      Profile.tsx           # Demo profile page
+    state/
+      store.ts              # Zustand store, types, ids, persistence
+    main.tsx                # Hash router and routes
+    index.css               # Minimal global styles
+  vite.config.ts            # Base configured for GH Pages
+  package.json              # Scripts including deploy via gh-pages
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Running Locally
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+Open `http://localhost:5173`.
+
+## Routing Model (No Backend, No Auth)
+
+- The app uses a dummy `Login` page. Clicking "Sign in" simply routes to `#/dashboard`.
+- All pages are accessible; there is no auth gating.
+- Routes use hash URLs so they work on GitHub Pages:
+  - `#/dashboard`
+  - `#/gallery`
+  - `#/configure/:templateKey`
+  - `#/automations`
+  - `#/designer`
+  - `#/profile`
+
+## Template System (UI Only)
+
+Templates are defined in `data/templates.ts` and rendered in the gallery. Each template includes a `parameters` array that drives the dynamic form.
+
+Example template shape:
+
+```ts
+interface TemplateDefinition {
+  key: string;
+  title: string;
+  description: string;
+  parameters: {
+    id: string;
+    label: string;
+    type: 'text' | 'textarea' | 'number' | 'boolean' | 'choice';
+    required?: boolean;
+    options?: string[];
+  }[];
+}
+```
+
+Saving a configuration creates a local item in `My Automations`. There is no server; data persists in `localStorage` via Zustand's `persist` middleware.
+
+## Designer (UI Mock)
+
+The Designer page offers a minimal canvas. You can add nodes from a palette and reorder them via drag-and-drop. This is a UI placeholder for future logic.
+
+## Deploy to GitHub Pages
+
+Prerequisites:
+- A GitHub repository with this project at the root or in a subfolder.
+- GitHub Actions or local terminal access.
+
+Vite config is set to use a `base` path when `GITHUB_PAGES=1` is present, and we deploy the `dist` folder via `gh-pages`.
+
+### One-time setup
+
+1. Ensure `homepage` path (repo name) in `vite.config.ts` base matches your repository name. It defaults to `/automation-ui/`. Update it if your repo is different.
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Ensure `gh-pages` is installed (already in `devDependencies`).
+
+### Deploy from local
+
+```bash
+npm run deploy
+```
+
+This runs a build and publishes `dist` to the `gh-pages` branch.
+
+Then enable GitHub Pages in your repo settings targeting the `gh-pages` branch.
+
+### Deploy via GitHub Actions (optional)
+
+Add `.github/workflows/deploy.yml`:
+
+```yaml
+name: Deploy to GH Pages
+on:
+  push:
+    branches: [ main ]
+permissions:
+  contents: write
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+        env:
+          GITHUB_PAGES: '1'
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+```
+
+If using Actions, you can remove the `gh-pages` dev dependency and scripts and rely solely on the action.
+
+## How to Add More Templates
+
+1. Edit `src/data/templates.ts` and add a new object to the `templates` array.
+2. Use parameter `type` to control the rendered field.
+3. The `ConfigureTemplate` page will automatically render the form and save the result to `My Automations`.
+
+## Notes
+
+- This is a UI-only demo patterned after Power Automate. No Microsoft Graph or SharePoint calls are made.
+- MSAL libraries are installed but not used; kept for future integration.
+- For a custom repo name, change `base` in `vite.config.ts` and rerun `npm run deploy`.
