@@ -200,6 +200,20 @@ Front-end wiring for backend (future):
 - Replace local Zustand persistence in `My Automations` with calls to `/configurations`.
 - Replace `data/templates.ts` with a fetch to `/templates`.
 
+## Optional Front-end MSAL (commented scaffold)
+
+For production auth, the front-end includes a commented MSAL scaffold in `src/auth/msal.ts` and a commented "Sign in with Microsoft" button in `src/pages/Login.tsx`.
+
+To enable:
+1. Set env vars in a `.env` (or `.env.local`):
+   - `VITE_AZURE_CLIENT_ID`
+   - `VITE_AZURE_TENANT_ID`
+   - `VITE_REDIRECT_URI` (optional; defaults to window.location.origin)
+2. Uncomment the imports and button in `Login.tsx`.
+3. Create the MSAL provider at app root (wrap router) if you want full token handling across pages.
+
+Server-side OBO (see `server/index.js`) can exchange front-end tokens for downstream API calls to Graph or a custom Engine API.
+
 ## How to Add More Templates
 
 1. Edit `src/data/templates.ts` and add a new object to the `templates` array.
