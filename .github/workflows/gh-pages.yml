@@ -1,8 +1,11 @@
-name: Deploy Vite app to GitHub Pages
+name: Deploy Vite app to GitHub Pages (UI only)
 
 on:
   push:
-    branches: [ main, master, '**' ]
+    branches: [ main, master ]
+    paths:
+      - 'automation-ui/**'
+      - '.github/workflows/gh-pages.yml'
   workflow_dispatch:
 
 permissions:
