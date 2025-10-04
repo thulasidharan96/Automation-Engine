@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Button, Card, CardHeader, Field, Input, Text, tokens, makeStyles } from '@fluentui/react-components';
-import { useAutomationStudio } from '../state/store';
+import { useNavigate } from 'react-router-dom';
+// No auth in demo
 
 const useStyles = makeStyles({
   root: {
@@ -9,22 +10,21 @@ const useStyles = makeStyles({
     minHeight: '100vh',
     background: tokens.colorNeutralBackground2,
   },
-  card: {
-    width: 420,
-  },
+  card: {},
 });
 
 export default function Login() {
   const styles = useStyles();
-  const isAuthenticated = useAutomationStudio((s) => s.isAuthenticated);
-  const signIn = useAutomationStudio((s) => s.signIn);
+  // This demo has no real auth; clicking Sign in just routes
+  const navigate = useNavigate();
+  // no-op
 
   useEffect(() => {
     document.title = 'Sign in • Automation Studio';
   }, []);
 
   function handleMockLogin() {
-    signIn({ name: 'A. User', email: 'user@example.com' });
+    navigate('/dashboard', { replace: true });
   }
 
   return (

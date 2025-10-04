@@ -1,9 +1,10 @@
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState } from 'react';
 import { Button, Card, CardHeader, Text, tokens } from '@fluentui/react-components';
-import { generateId, useAutomationStudio, DesignerNode } from '../state/store';
+import { generateId } from '../state/store';
+import type { DesignerNode } from '../state/store';
 
 const palette: Omit<DesignerNode, 'id'>[] = [
   { kind: 'trigger', label: 'When schedule runs' },

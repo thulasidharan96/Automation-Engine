@@ -1,4 +1,4 @@
-import { TemplateDefinition } from '../state/store';
+import type { TemplateDefinition } from '../state/store';
 
 export const templates: TemplateDefinition[] = [
   {

@@ -1,6 +1,6 @@
 import { Card, CardHeader, Button, Text, tokens, makeStyles, Body1, Caption1 } from '@fluentui/react-components';
-import { useAutomationStudio, TemplateDefinition, generateId } from '../state/store';
-import { Link } from 'react-router-dom';
+import { useAutomationStudio } from '../state/store';
+import type { TemplateDefinition } from '../state/store';
 
 const useStyles = makeStyles({
   grid: {
@@ -32,7 +32,7 @@ function TemplateCard({ template }: { template: TemplateDefinition }) {
       <CardHeader header={<Text weight="semibold">{template.title}</Text>} />
       <Body1>{template.description}</Body1>
       <div style={{ height: 8 }} />
-      <Button as={Link} to={`/configure/${template.key}`} appearance="primary">
+      <Button as="a" href={`#/configure/${template.key}`} appearance="primary">
         Use this template
       </Button>
       <div style={{ height: 8 }} />

@@ -1,5 +1,5 @@
 import { Field, Input, Textarea, Switch, Dropdown, Option } from '@fluentui/react-components';
-import { ParameterDefinition } from '../state/store';
+import type { ParameterDefinition } from '../state/store';
 
 export interface DynamicFormProps {
   parameters: ParameterDefinition[];
