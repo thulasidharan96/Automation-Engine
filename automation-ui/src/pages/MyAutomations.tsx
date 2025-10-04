@@ -9,7 +9,7 @@ export default function MyAutomations() {
   return (
     <div style={{ display: 'grid', gap: 12 }}>
       <Text as="h2" weight="semibold">My Automations</Text>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: tokens.spacingHorizontalM }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: tokens.spacingHorizontalM }}>
         {automations.map((a) => (
           <Card key={a.id}>
             <CardHeader header={<Text weight="semibold">{a.title}</Text>} description={<Caption1>{a.templateKey} • {a.frequency}</Caption1>} />

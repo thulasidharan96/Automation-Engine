@@ -12,8 +12,16 @@ import {
   Tooltip,
   Text,
   makeStyles,
+  Dialog,
+  DialogSurface,
+  DialogBody,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  Button,
 } from '@fluentui/react-components';
-import { SignOut24Regular, Person24Regular } from '@fluentui/react-icons';
+import { SignOut24Regular, Person24Regular, Navigation24Regular } from '@fluentui/react-icons';
+import { useState } from 'react';
 import { useAutomationStudio } from '../state/store';
 
 const brand: BrandVariants = {
@@ -45,6 +53,11 @@ const useStyles = makeStyles({
     gridTemplateColumns: '280px 1fr',
     gridTemplateAreas: `"header header" "nav main"`,
     minHeight: '100vh',
+    '@media (max-width: 900px)': {
+      gridTemplateColumns: '1fr',
+      gridTemplateRows: '56px 1fr',
+      gridTemplateAreas: `"header" "main"`,
+    },
   },
   header: {
     gridArea: 'header',
@@ -61,10 +74,16 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalS,
+    '@media (max-width: 900px)': {
+      display: 'none',
+    },
   },
   main: {
     gridArea: 'main',
     padding: tokens.spacingHorizontalL,
+    '@media (max-width: 600px)': {
+      padding: tokens.spacingHorizontalM,
+    },
   },
   navLink: {
     textDecorationLine: 'none',
@@ -74,21 +93,40 @@ const useStyles = makeStyles({
     ':hover': { backgroundColor: tokens.colorSubtleBackgroundHover },
     '&.active': { backgroundColor: tokens.colorSubtleBackgroundSelected, color: tokens.colorNeutralForeground1 },
   },
+  headerLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalS,
+  },
+  menuButton: {
+    display: 'none',
+    '@media (max-width: 900px)': { display: 'inline-flex' },
+  },
 });
 
 export function AppShell({ children }: PropsWithChildren) {
   const styles = useStyles();
   const theme = useAutomationStudio((s) => s.theme);
   const user = { name: 'Demo User', email: 'demo@example.com' };
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
     <FluentProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
       <div className={styles.layout}>
         <header className={styles.header}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-            <Avatar name="Flow" color="colorful" />
-            <Text weight="semibold">Automation Studio</Text>
-          </Link>
+          <div className={styles.headerLeft}>
+            <Button
+              className={styles.menuButton}
+              appearance="subtle"
+              icon={<Navigation24Regular />}
+              aria-label="Open navigation"
+              onClick={() => setMobileNavOpen(true)}
+            />
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+              <Avatar name="Flow" color="colorful" />
+              <Text weight="semibold">Automation Studio</Text>
+            </Link>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Tooltip content={user?.email ?? ''} relationship="label">
               <Avatar name={user?.name ?? 'User'} />
@@ -109,6 +147,25 @@ export function AppShell({ children }: PropsWithChildren) {
         <main className={styles.main}>
           {children ?? <Outlet />}
         </main>
+        <Dialog open={mobileNavOpen} onOpenChange={(_, d) => setMobileNavOpen(!!d.open)} modalType="modal">
+          <DialogSurface>
+            <DialogBody>
+              <DialogTitle>Menu</DialogTitle>
+              <DialogContent>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 8 }}>
+                  <a className={styles.navLink} href="#/dashboard" onClick={() => setMobileNavOpen(false)}>Dashboard</a>
+                  <a className={styles.navLink} href="#/gallery" onClick={() => setMobileNavOpen(false)}>Templates</a>
+                  <a className={styles.navLink} href="#/automations" onClick={() => setMobileNavOpen(false)}>My Automations</a>
+                  <a className={styles.navLink} href="#/designer" onClick={() => setMobileNavOpen(false)}>Designer</a>
+                  <a className={styles.navLink} href="#/profile" onClick={() => setMobileNavOpen(false)}>Profile</a>
+                </div>
+              </DialogContent>
+              <DialogActions>
+                <Button appearance="secondary" onClick={() => setMobileNavOpen(false)}>Close</Button>
+              </DialogActions>
+            </DialogBody>
+          </DialogSurface>
+        </Dialog>
       </div>
     </FluentProvider>
   );
