@@ -1,0 +1,117 @@
+import { PropsWithChildren } from 'react';
+import { Link, NavLink, Outlet } from 'react-router-dom';
+import {
+  BrandVariants,
+  createLightTheme,
+  createDarkTheme,
+  FluentProvider,
+  webLightTheme,
+  tokens,
+  Button,
+  Avatar,
+  Toolbar,
+  ToolbarButton,
+  Tooltip,
+  Text,
+  makeStyles,
+} from '@fluentui/react-components';
+import { SignOut24Regular, Person24Regular } from '@fluentui/react-icons';
+import { useAutomationStudio } from '../state/store';
+
+const brand: BrandVariants = {
+  10: '#020305',
+  20: '#111723',
+  30: '#16263D',
+  40: '#19324D',
+  50: '#1B3F5F',
+  60: '#1F4F78',
+  70: '#215F90',
+  80: '#2870AF',
+  90: '#2B88D8',
+  100: '#479EF5',
+  110: '#62ABF5',
+  120: '#77B7F7',
+  130: '#96C6FA',
+  140: '#B4D6FA',
+  150: '#D5E6FB',
+  160: '#EFF6FF',
+};
+
+const lightTheme = createLightTheme(brand);
+const darkTheme = createDarkTheme(brand);
+
+const useStyles = makeStyles({
+  layout: {
+    display: 'grid',
+    gridTemplateRows: '56px 1fr',
+    gridTemplateColumns: '280px 1fr',
+    gridTemplateAreas: `"header header" "nav main"`,
+    minHeight: '100vh',
+  },
+  header: {
+    gridArea: 'header',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingInline: tokens.spacingHorizontalM,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
+  nav: {
+    gridArea: 'nav',
+    borderRight: `1px solid ${tokens.colorNeutralStroke2}`,
+    padding: tokens.spacingHorizontalM,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalS,
+  },
+  main: {
+    gridArea: 'main',
+    padding: tokens.spacingHorizontalL,
+  },
+  navLink: {
+    textDecorationLine: 'none',
+    padding: '8px 12px',
+    borderRadius: tokens.borderRadiusMedium,
+    color: tokens.colorNeutralForeground2,
+    ':hover': { backgroundColor: tokens.colorSubtleBackgroundHover },
+    '&.active': { backgroundColor: tokens.colorSubtleBackgroundSelected, color: tokens.colorNeutralForeground1 },
+  },
+});
+
+export function AppShell({ children }: PropsWithChildren) {
+  const styles = useStyles();
+  const theme = useAutomationStudio((s) => s.theme);
+  const user = useAutomationStudio((s) => s.user);
+  const signOut = useAutomationStudio((s) => s.signOut);
+
+  return (
+    <FluentProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
+      <div className={styles.layout}>
+        <header className={styles.header}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+            <Avatar name="Flow" color="colorful" />
+            <Text weight="semibold">Automation Studio</Text>
+          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Tooltip content={user?.email ?? ''} relationship="label">
+              <Avatar name={user?.name ?? 'User'} />
+            </Tooltip>
+            <Toolbar>
+              <ToolbarButton aria-label="Profile" icon={<Person24Regular />} as={Link} to="/profile" />
+              <ToolbarButton aria-label="Sign out" icon={<SignOut24Regular />} onClick={signOut} as={Link} to="/login" />
+            </Toolbar>
+          </div>
+        </header>
+        <nav className={styles.nav}>
+          <NavLink className={styles.navLink} to="/gallery">Templates</NavLink>
+          <NavLink className={styles.navLink} to="/automations">My Automations</NavLink>
+          <NavLink className={styles.navLink} to="/designer">Designer</NavLink>
+          <NavLink className={styles.navLink} to="/profile">Profile</NavLink>
+        </nav>
+        <main className={styles.main}>
+          {children ?? <Outlet />}
+        </main>
+      </div>
+    </FluentProvider>
+  );
+}
