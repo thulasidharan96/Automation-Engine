@@ -41,7 +41,7 @@ export default function ConfigureTemplate() {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 16, maxWidth: 680 }}>
+    <div style={{ display: 'grid', gap: 16, maxWidth: 720 }}>
       <Text as="h2" weight="semibold">Configure: {template.title}</Text>
       <Field label="Title">
         <Input value={title} onChange={(_, d) => setTitle(d.value)} placeholder={template?.title} />
