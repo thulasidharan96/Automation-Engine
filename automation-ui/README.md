@@ -1,6 +1,6 @@
-# Automation Studio (UI Demo)
+# Automation Studio (UI + Backend Stubs)
 
-A front-end only demo inspired by Microsoft Power Automate. Built with React + Fluent UI 9, and deployable to GitHub Pages. No backend, no authentication. Uses HashRouter so routes work on static hosting.
+Front-end demo inspired by Microsoft Power Automate with optional backend stubs. UI is deployable to GitHub Pages. Backend is optional for local testing and shows how MSAL and Power Automate triggers can be wired.
 
 ## Features
 
@@ -47,7 +47,7 @@ automation-ui/
   package.json              # Scripts including deploy via gh-pages
 ```
 
-## Running Locally
+## Running Locally (UI only)
 
 ```bash
 npm install
@@ -155,6 +155,50 @@ jobs:
 ```
 
 If using Actions, you can remove the `gh-pages` dev dependency and scripts and rely solely on the action.
+
+## Optional Backend (Node/Express) — commented MSAL integration
+
+The `server/` folder contains an Express server with stub endpoints and commented MSAL On-Behalf-Of (OBO) flow. This is provided for future integration. For now, you can run it locally to simulate a trigger call without any real cloud dependencies.
+
+Folder structure:
+
+```
+server/
+  index.js         # Express app with stubbed routes
+  package.json
+  .env.example     # Environment variables (MSAL + Flow endpoint), commented
+```
+
+Install and run (optional):
+
+```bash
+cd server
+npm install
+npm run start
+# visit http://localhost:3001/health
+```
+
+Endpoints:
+- POST `/automations/trigger` — accepts `{ templateKey, customParameters }` and returns `{ status: 'queued' }` (stub). Replace with a Power Automate HTTP Request trigger URL by setting `FLOW_ENGINE_URL` in `.env` and uncommenting the fetch block.
+- GET `/templates` — placeholder for fetching template library (would come from SharePoint list via Microsoft Graph).
+- POST `/configurations` — placeholder to save a configuration (would write to SharePoint list).
+
+Commented MSAL OBO outline (server/index.js):
+1. Configure `@azure/msal-node` `ConfidentialClientApplication` with `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+2. Receive a user token from the front-end (Authorization: Bearer <token>), call `acquireTokenOnBehalfOf` to get an access token for downstream APIs (Graph or your custom Engine API).
+3. Call your Engine API or Graph with the OBO access token.
+
+Power Automate Engine Flow trigger options:
+- HTTP Request trigger (simple): Expose a URL with a function key and POST `{ templateKey, customParameters }` from `/automations/trigger`.
+- Secured custom API: Protect with AAD; the server obtains an access token via MSAL OBO and calls the API.
+
+SharePoint Lists (for production):
+- Automation Templates (definition library)
+- Automation Configurations (user configurations)
+
+Front-end wiring for backend (future):
+- Replace local Zustand persistence in `My Automations` with calls to `/configurations`.
+- Replace `data/templates.ts` with a fetch to `/templates`.
 
 ## How to Add More Templates
 
